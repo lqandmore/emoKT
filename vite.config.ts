@@ -24,13 +24,23 @@ const alias: Record<string, string> = {
   router: pathResolve("src/router"),
   utils: pathResolve("src/utils"),
   hooks: pathResolve("src/hooks"),
-  styles: pathResolve("src/styles"),
+  styles: pathResolve("src/styles")
 };
 
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    alias,
+    alias
+  },
+  server: {
+    port: 3000,
+    proxy: {
+      "/api": {
+        target: "http://ketang.api.test.duia.com/",
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, "")
+      }
+    }
   },
   plugins: [
     vue(),
@@ -39,21 +49,21 @@ export default defineConfig({
       resolvers: [
         ElementPlusResolver(),
         IconsResolver({
-          prefix: "Icon",
-        }),
-      ],
+          prefix: "Icon"
+        })
+      ]
     }),
     Components({
       resolvers: [
         IconsResolver({
-          enabledCollections: ["ep"],
+          enabledCollections: ["ep"]
         }),
-        ElementPlusResolver(),
-      ],
+        ElementPlusResolver()
+      ]
     }),
     Icons({
-      autoInstall: true,
+      autoInstall: true
     }),
-    Inspect(),
-  ],
+    Inspect()
+  ]
 });

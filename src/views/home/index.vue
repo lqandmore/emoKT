@@ -1,5 +1,9 @@
 <script setup lang="ts">
 
+import { requestLiveData } from './hooks';
+
+ requestLiveData();
+
 </script>
 
 <template>
