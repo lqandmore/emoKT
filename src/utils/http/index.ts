@@ -3,6 +3,9 @@ import Axios, {
   CustomParamsSerializer,
   Method
 } from "axios";
+import { CommonParams } from "@/utils/http/types";
+import md5 from "blueimp-md5";
+const MD5Key = "duiaNiuBi)JN#ERFGBN";
 
 const defineConfig: AxiosRequestConfig = {
   timeout: 10000,
@@ -16,12 +19,36 @@ const defineConfig: AxiosRequestConfig = {
 class Http {
   private static axiosInstance = Axios.create(defineConfig);
 
+  setSecriteParam(params: CommonParams) {
+    params.AppID = "787053744";
+    params.AppVersion = "5.3.7";
+    params.appType = 2;
+    params.platform = 2;
+    params.signtoken = "1b35b629f466ffb8ae099f6d2de87b81da625091";
+
+    const keys = Object.keys(params).sort((a: string, b: string) => {
+      return a > b ? 1 : -1;
+    });
+
+    let signature = "";
+    keys.forEach((key: string) => {
+      if (key !== "signature") {
+        signature += `&${key}=${params[key]}`;
+      }
+    });
+    signature = signature.substring(1) + MD5Key;
+    const md5Str = md5(signature);
+
+    params.signature = md5Str;
+  }
+
   public request<T>(
     method: Method,
     url: string,
     params?: any,
     axiosConfig?: AxiosRequestConfig
   ): Promise<T> {
+    this.setSecriteParam(params);
     const config = {
       method,
       url,

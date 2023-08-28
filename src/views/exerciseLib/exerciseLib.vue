@@ -4,7 +4,7 @@
 
 <template>
 <div>
-denglu
+tiku
 </div>
 </template>
 
