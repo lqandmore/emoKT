@@ -4,11 +4,10 @@ import { useAppStoreHook } from "@/store/app";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "tabbar",
-    component: () => import("../views/tabbar/tabbar.vue")
+    redirect: "/:skuId"
   },
   {
-    path: "/home",
+    path: "/:skuId",
     name: "home",
     component: () => import("../views/home/Home.vue")
   },
@@ -27,6 +26,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "mine",
     component: () => import("../views/mine/mine.vue")
   },
+
   {
     path: "/selectSku",
     name: "selectSku",
@@ -40,10 +40,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from) => {
-  console.log(useAppStoreHook().getCurrentSku);
   if (to.path !== "/selectSku" && useAppStoreHook().getCurrentSku === 0) {
     return "/selectSku";
   }
+  if (to.path === "/:skuId") {
+    return "/" + useAppStoreHook().getCurrentSku;
+  }
+
 });
 
 export default router;

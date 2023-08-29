@@ -45,10 +45,14 @@ class Http {
   public request<T>(
     method: Method,
     url: string,
+    needSecrite?: boolean,
     params?: any,
+
     axiosConfig?: AxiosRequestConfig
   ): Promise<T> {
-    this.setSecriteParam(params);
+    if (needSecrite) {
+      this.setSecriteParam(params);
+    }
     const config = {
       method,
       url,
@@ -70,25 +74,28 @@ class Http {
   public get<T>(
     url: string,
     params?: any,
+    needSecrite: boolean = true,
     axiosConfig?: AxiosRequestConfig
   ): Promise<T> {
-    return this.request<T>("get", url, params, axiosConfig);
+    return this.request<T>("get", url,needSecrite, params, axiosConfig);
   }
 
   public post<T>(
     url: string,
     params?: any,
+    needSecrite: boolean = true,
     axiosConfig?: AxiosRequestConfig
   ): Promise<T> {
-    return this.request<T>("post", url, params, axiosConfig);
+    return this.request<T>("post", url, needSecrite, params, axiosConfig);
   }
 
   public delete<T>(
     url: string,
     param?: any,
+    needSecrite: boolean = true,
     axiosConfig?: AxiosRequestConfig
   ): Promise<T> {
-    return this.request<T>("delete", url, param, axiosConfig);
+    return this.request<T>("delete", url, needSecrite, param, axiosConfig);
   }
 }
 

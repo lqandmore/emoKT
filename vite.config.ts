@@ -42,6 +42,11 @@ export default defineConfig({
         target: "http://ketang.api.test.duia.com/",
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, "")
+      },
+      "/sku": {
+        target: "http://sku.test.duia.com/",
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/sku/, "")
       }
     }
   },
@@ -49,6 +54,7 @@ export default defineConfig({
     vue(),
     AutoImport({
       imports: ["vue", "vue-router", "@vueuse/core"],
+      dts: "src/auto-imports.d.ts",
       resolvers: [
         ElementPlusResolver(),
         IconsResolver({
