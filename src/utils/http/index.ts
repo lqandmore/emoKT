@@ -1,5 +1,6 @@
 import Axios, {
   AxiosRequestConfig,
+  AxiosResponse,
   CustomParamsSerializer,
   Method
 } from "axios";
@@ -16,10 +17,33 @@ const defineConfig: AxiosRequestConfig = {
   }
 };
 
+export interface HttpResponse extends AxiosResponse {
+  config: HttpRequestConfig;
+}
+
+export interface codeHttpResponse {
+  code: number;
+  message: string;
+  data: object;
+}
+export interface stateHttpResponse {
+  state: number;
+  stateInfo: string;
+  resInfo: object;
+}
+
+export interface HttpRequestConfig extends AxiosRequestConfig {
+  beforeRequestCallback?: (request: HttpRequestConfig) => void;
+  beforeResponseCallback?: (response: HttpResponse) => void;
+}
+
 class Http {
+  constructor() {
+    this.httpInterceptorsResponse();
+  }
   private static axiosInstance = Axios.create(defineConfig);
 
-  setSecriteParam(params: CommonParams) {
+  private setSecriteParam(params: CommonParams) {
     params.AppID = "787053744";
     params.AppVersion = "5.3.7";
     params.appType = 2;
@@ -40,6 +64,51 @@ class Http {
     const md5Str = md5(signature);
 
     params.signature = md5Str;
+  }
+
+  /** 响应拦截 */
+  private httpInterceptorsResponse(): void {
+    const instance = Http.axiosInstance;
+    instance.interceptors.response.use(
+      (response: HttpResponse) => {
+        const $config = response.config;
+
+        if (typeof $config.beforeResponseCallback === "function") {
+          // 优先判断post/get等方法是否传入回调，否则执行初始化设置等回调
+          $config.beforeResponseCallback(response);
+          return response.data;
+        }
+        if (response.data["code"] !== undefined) {
+
+          const dataInfo = response.data as codeHttpResponse;
+          console.log(dataInfo);
+
+          if (dataInfo.code === 200) {
+            return dataInfo.data;
+          } else {
+            return Promise.reject(dataInfo.message);
+          }
+        } else if (response.data["state"] !== undefined) {
+          const dataInfo = response.data as stateHttpResponse;
+          if (dataInfo.state === 0) {
+            return dataInfo.resInfo;
+          } else {
+            return Promise.reject(dataInfo.stateInfo);
+          }
+        }
+        // if (Http.initConfig.beforeResponseCallback) {
+        //   Http.initConfig.beforeResponseCallback(response);
+        //   return response.data;
+        // }
+        return response.data;
+      },
+      (error: any) => {
+        const $error = error;
+        $error.isCancelRequest = Axios.isCancel($error);
+        // 所有的响应异常 区分来源为取消请求/非取消请求
+        return Promise.reject($error);
+      }
+    );
   }
 
   public request<T>(
@@ -77,7 +146,7 @@ class Http {
     needSecrite: boolean = true,
     axiosConfig?: AxiosRequestConfig
   ): Promise<T> {
-    return this.request<T>("get", url,needSecrite, params, axiosConfig);
+    return this.request<T>("get", url, needSecrite, params, axiosConfig);
   }
 
   public post<T>(

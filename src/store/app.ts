@@ -6,6 +6,7 @@ export const useAppStore = defineStore({
   state: () => {
     return {
       currentSku: 0
+
     };
   },
   getters: {
