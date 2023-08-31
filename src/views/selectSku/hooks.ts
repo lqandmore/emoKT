@@ -4,7 +4,7 @@ export type Sku = {
   checked_sku_img_url: string;
   id: number;
   isCommodity: number;
-  name: number;
+  name: string;
   orderNum: number;
   skuId: number;
   unchecked_sku_img_url: string;
