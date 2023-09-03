@@ -1,23 +1,21 @@
 <script setup lang="ts">
-
 const props = defineProps({
   title: String
-})
-
+});
 </script>
 
 <template>
   <div class="collection-group">
     <div class="title">{{ props.title }}</div>
     <div class="group">
-      <slot>
-      </slot>
+      <slot> </slot>
     </div>
   </div>
 </template>
 
 <style scoped>
-.collection-group {}
+.collection-group {
+}
 
 .title {
   /* width: 100%; */
@@ -32,6 +30,5 @@ const props = defineProps({
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
-
 }
 </style>
