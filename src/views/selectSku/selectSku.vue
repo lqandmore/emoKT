@@ -1,23 +1,21 @@
 <script setup lang="ts">
-import { useAppStoreHook } from "@/store/app";
-import router from "@/router";
 import { requestSkuData, Colleges } from "./hooks";
 import collectionCell from "@/components/collection/collectionCell.vue";
 import collectionGroup from "@/components/collection/collectionGroup.vue";
 import leftCell from "./leftCell.vue";
 
-// const selectSku = () => {
-//   useAppStoreHook().changeCurrentSku(8);
-//   router.push({ path: "/8" });
-// };
-
 const vnodesRef = Array<Ref<typeof leftCell | null>>();
-
 const collegesArr = ref(Array<Colleges>());
+let scrollEndTimer: any;
+const selectIndex = ref(0);
+let isClick = false;
+let bannerRef = ref("");
+
 async function requestData() {
   try {
-    const { colleges } = await requestSkuData();
+    const { banner, colleges } = await requestSkuData();
     collegesArr.value = colleges;
+    bannerRef.value = "http://tu.test.duia.com/" + banner;
     colleges.forEach(() => {
       const childRef = ref<typeof leftCell | null>(null);
       vnodesRef.push(childRef);
@@ -27,20 +25,16 @@ async function requestData() {
   }
 }
 
-const selectIndex = ref(0);
-
-requestData();
+onMounted(() => {
+  requestData();
+});
 
 const leftClick = (index: number) => {
-  const leftItems = document.getElementsByClassName("left-cell");
-  const preItem = leftItems[selectIndex.value];
-  // preItem.changeBackground(true, true);
-
+  isClick = true;
+  setTimeout(callback, 100);
+  selectIndex.value = index;
   const El = document.getElementsByClassName("collegeTitle")[index];
-  El.scrollIntoView({ behavior: "smooth" });
-
-  console.log(typeof vnodesRef[index].value);
-  vnodesRef[index].value?.changeBackground(true, true);
+  El.scrollIntoView({ behavior: "auto" });
 };
 
 function getTopVisibleElement(): Element | null {
@@ -61,19 +55,25 @@ function getTopVisibleElement(): Element | null {
   return topElement;
 }
 
-function handleScroll() {
+const callback = () => {
+  isClick = false;
+};
+
+document.onscroll = () => {
   const topVisibleElement = getTopVisibleElement();
   let attrs = selectIndex.value;
   if (typeof topVisibleElement?.getAttribute("index") === "string") {
     attrs = parseInt(topVisibleElement?.getAttribute("index")!);
   }
-
-  if (selectIndex.value !== attrs) {
-    selectIndex.value = attrs;
+  if (!isClick) {
+    if (selectIndex.value !== attrs) {
+      selectIndex.value = attrs;
+    }
   }
-}
 
-window.addEventListener("scroll", handleScroll);
+  clearTimeout(scrollEndTimer);
+  scrollEndTimer = setTimeout(callback, 100);
+};
 </script>
 
 <template>
@@ -83,8 +83,13 @@ window.addEventListener("scroll", handleScroll);
       <template v-for="(college, index) in collegesArr" :key="college.id">
         <left-cell
           :title="college.name"
-          :selected="selectIndex === index"
-          :show-cor="selectIndex > 1 && selectIndex - 1 === index"
+          :show-type="
+            selectIndex === index
+              ? 1
+              : selectIndex > 0 && selectIndex - 1 === index
+              ? 2
+              : 0
+          "
           :index="index"
           @click="leftClick(index)"
           :ref="vnodesRef[index]"
@@ -94,6 +99,7 @@ window.addEventListener("scroll", handleScroll);
     </div>
 
     <div class="container">
+      <van-image class="banner" :src="bannerRef"></van-image>
       <div class="list">
         <template v-for="(college, index) in collegesArr" :key="college.id">
           <collection-group
@@ -140,6 +146,11 @@ window.addEventListener("scroll", handleScroll);
   position: relative;
   padding: 60px 0 0 78px;
   width: calc(100vw - 78px);
+}
+
+.banner {
+  width: calc(100vw - 78px);
+  height: 100px;
 }
 .list {
   position: absolute;

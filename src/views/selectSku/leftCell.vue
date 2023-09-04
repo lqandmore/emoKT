@@ -1,41 +1,53 @@
 <script setup lang="ts">
-
-
 const props = defineProps({
   title: String,
+  showType: Number,
   selected: Boolean,
   showCor: Boolean,
+  index: Number
 });
 
+const image = ref("");
 
-const changeBackground = (select: Boolean, showCor: Boolean) => {
+watch(
+  () => props.showType,
+  showType => {
+    if (showType === 1) {
+      image.value = "/src/assets/sku-select.png";
+    } else if (showType === 2) {
+      image.value = "/src/assets/sku-select-2.png";
+    } else {
+      image.value = "";
+    }
+  },
+  { immediate: true }
+);
+
+const changeBackground = (select: Boolean, showLine: Boolean) => {
+  // const leftEl = document.getElementsByClassName("left-cell")[props.index!];
+  // const El = document.getElementsByClassName("shot-line")[0];
   // if (select) {
-  //   const El = document.getElementsByClassName("shot-line")[0];
+  //   El.style.opacity = 1;
+  //   leftEl.style.background = `url(${image})`
+  // } else if (showLine) {
   //   El.style.opacity = 0;
+  //   leftEl.style.background = `url(${image})`
+  // } else {
+  //   El.style.opacity = 0;
+  //   leftEl.style.background = ''
   // }
-    console.log(111111);
-
 };
 
 defineExpose({
   changeBackground,
-})
-
-
-const image = ref(
-  props.selected
-    ? "/src/assets/sku-select.png"
-    : props.showCor
-    ? "/src/assets/sku-select-2.png"
-    : ""
-);
-
+  image
+});
 </script>
 
 <template>
-  <div class="left-cell" :style="{ 'background-image': 'url(' + image + ')' }" >
+  <div class="left-cell" :style="{ 'background-image': 'url(' + image + ')' }">
     <div class="left-cell-title">{{ props.title }}</div>
-    <div class="shot-line" :hidden="!selected"></div>
+    <div class="shot-line" :hidden="props.showType !== 1"></div>
   </div>
 </template>
 
