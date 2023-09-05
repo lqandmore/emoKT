@@ -5,18 +5,21 @@ export const useAppStore = defineStore({
   id: "app",
   state: () => {
     return {
-      currentSku: 0
-
+      currentSku: 0,
+      collageIndex: 0,
+      skuIndex: 0
     };
   },
   getters: {
-    getCurrentSku(state) {
-      return state.currentSku;
-    }
+
   },
   actions: {
     changeCurrentSku(sku: number): void {
       this.currentSku = sku;
+    },
+    savePosition(x: number, y: number): void {
+      this.collageIndex = x;
+      this.skuIndex = y;
     }
   }
 });

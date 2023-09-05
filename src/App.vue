@@ -2,7 +2,7 @@
 import { useAppStoreHook } from "./store/app";
 const active = ref(0);
 const computedSelect = () => {
-  return useAppStoreHook().getCurrentSku !== 0;
+  return useAppStoreHook().currentSku !== 0;
 };
 
 

@@ -1,59 +1,55 @@
 <script setup lang="ts">
+import "@/style/index.scss"
 const props = defineProps({
   title: String,
-  showType: Number,
-  selected: Boolean,
-  showCor: Boolean,
+  select: Boolean,
+  previous: Boolean,
   index: Number
 });
 
-const image = ref("");
 
-watch(
-  () => props.showType,
-  showType => {
-    if (showType === 1) {
-      image.value = "/src/assets/sku-select.png";
-    } else if (showType === 2) {
-      image.value = "/src/assets/sku-select-2.png";
-    } else {
-      image.value = "";
-    }
-  },
-  { immediate: true }
-);
-
-const changeBackground = (select: Boolean, showLine: Boolean) => {
-  // const leftEl = document.getElementsByClassName("left-cell")[props.index!];
-  // const El = document.getElementsByClassName("shot-line")[0];
-  // if (select) {
-  //   El.style.opacity = 1;
-  //   leftEl.style.background = `url(${image})`
-  // } else if (showLine) {
-  //   El.style.opacity = 0;
-  //   leftEl.style.background = `url(${image})`
-  // } else {
-  //   El.style.opacity = 0;
-  //   leftEl.style.background = ''
-  // }
-};
-
-defineExpose({
-  changeBackground,
-  image
-});
 </script>
 
 <template>
-  <div class="left-cell" :style="{ 'background-image': 'url(' + image + ')' }">
+  <div class="left-cell" :class="{ 'left-cell-select': select, 'previous-select': previous }">
     <div class="left-cell-title">{{ props.title }}</div>
-    <div class="shot-line" :hidden="props.showType !== 1"></div>
+    <div class="shot-line" :class="{ 'bg-active': select }"></div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .left-cell {
-  background: url("@/assets/sku-select.png");
-  background-size: 78px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+}
+
+.left-cell-select {
+  background-image: url("@/assets/sku-select.png");
+  background-size: 100% 100%;
+}
+
+.previous-select {
+  background-image: url("@/assets/sku-select-2.png");
+  background-size: 4.04rem 0.81rem;
+}
+
+.left-cell-title {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+}
+
+.shot-line {
+  width: 20px;
+  height: 2px;
+  background: #fff;
+}
+
+.bg-active {
+  background: #47c88a;
 }
 </style>
