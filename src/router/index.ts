@@ -40,13 +40,15 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from) => {
-  if (to.path !== "/selectSku" && useAppStoreHook().currentSku === 0) {
+  if (
+    to.path !== "/selectSku" &&
+    useAppStoreHook().currentSkuId === undefined
+  ) {
     return "/selectSku";
   }
   if (to.path === "/:skuId") {
-    return "/" + useAppStoreHook().currentSku;
+    return "/" + useAppStoreHook().currentSkuId;
   }
-
 });
 
 export default router;

@@ -16,9 +16,6 @@ const itemClick = () => {
     <van-image width="26px" height="26px" fit="contain" position="center" :src="'/image' + props.imageUrl"></van-image>
     <div class="text">{{ title }}</div>
     <div class="bottomLine" :class="{ selected: isSelected }"></div>
-    <!-- <div class="bottomSpace">
-      <div class="bottomLine"></div>
-    </div> -->
 
   </div>
 </template>

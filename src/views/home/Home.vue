@@ -1,14 +1,33 @@
 <script setup lang="ts">
-import { requestSkuList } from "./hooks";
+import { requestOpenLives } from "./hooks";
 import { useRoute } from "vue-router";
-const skuId = useRoute();
-console.log(skuId);
+import { useAppStoreHook } from "@/store/app";
 
-// requestSkuList();
+async function requestDatas() {
+  try {
+    const data = await requestOpenLives();
+    console.log(data);
+  } catch (error: any) {
+    console.log(error);
+  }
+}
+
+onMounted(() => {
+  requestDatas();
+});
 </script>
 
 <template>
-  <div class="common-layout">首页</div>
+  <van-nav-bar
+    :title="useAppStoreHook().currentSkuName"
+    left-text="分类"
+    right-text="咨询"
+    class="top"
+  />
 </template>
 
-<style scoped></style>
+<style scoped>
+.van-nav-bar {
+  --van-nav-bar-text-color: var(--primary-theme-color);
+}
+</style>

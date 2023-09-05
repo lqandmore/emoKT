@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { requestSkuData, Colleges } from "./hooks";
+import { requestSkuData, Colleges, Sku } from "./hooks";
 import collectionCell from "@/components/collection/collectionCell.vue";
 import collectionGroup from "@/components/collection/collectionGroup.vue";
 import leftCell from "./leftCell.vue";
@@ -12,7 +12,7 @@ const selectIndex = ref(0);
 let isClick = false;
 let bannerRef = ref("");
 
-async function requestData () {
+async function requestData() {
   try {
     const { banner, colleges } = await requestSkuData();
     collegesArr.value = colleges;
@@ -36,7 +36,7 @@ const leftClick = (index: number) => {
   El.scrollIntoView({ behavior: "auto" });
 };
 
-function getTopVisibleElement (): Element | null {
+function getTopVisibleElement(): Element | null {
   const boxes = document.querySelectorAll(".collegeTitle");
 
   let topElement = null;
@@ -76,17 +76,18 @@ document.onscroll = () => {
 
 const bannerClick = () => {
   console.log(2222222);
-}
+};
 
-const collectionCellClick = (skuId: number) => {
-  useAppStoreHook().changeCurrentSku(skuId)
-  router.push({ path: `/${skuId}` })
-}
+const collectionCellClick = (sku: Sku) => {
+  useAppStoreHook().setSku(sku);
+  router.push({ path: `/${sku.skuId}` });
+};
 
 const skuSelect = (x: number, y: number) => {
-  return useAppStoreHook().collageIndex === x && useAppStoreHook().skuIndex === y
-}
-
+  return (
+    useAppStoreHook().collageIndex === x && useAppStoreHook().skuIndex === y
+  );
+};
 </script>
 
 <template>
@@ -94,20 +95,37 @@ const skuSelect = (x: number, y: number) => {
     <van-nav-bar title="对啊课堂 分类" class="top" />
     <div class="left">
       <template v-for="(college, index) in collegesArr" :key="college.id">
-        <left-cell :title="college.name" :select="selectIndex === index"
-          :previous="selectIndex > 0 && selectIndex - 1 === index" :index="index" @click="leftClick(index)">
+        <left-cell
+          :title="college.name"
+          :select="selectIndex === index"
+          :previous="selectIndex > 0 && selectIndex - 1 === index"
+          :index="index"
+          @click="leftClick(index)"
+        >
         </left-cell>
       </template>
     </div>
 
     <div class="container">
-      <van-image class="banner" :src="bannerRef" @click="bannerClick()"></van-image>
+      <van-image
+        class="banner"
+        :src="bannerRef"
+        @click="bannerClick()"
+      ></van-image>
       <div class="list">
         <template v-for="(college, index) in collegesArr" :key="college.id">
-          <collection-group class="collegeTitle" :title="college.name" :index="index">
+          <collection-group
+            class="collegeTitle"
+            :title="college.name"
+            :index="index"
+          >
             <template v-for="(sku, skuIndex) in college.skus" :key="sku.id">
-              <collection-cell :title="sku.name" :image-url="sku.unchecked_sku_img_url"
-                :is-selected="skuSelect(index, skuIndex)" @click="collectionCellClick(sku.skuId)"></collection-cell>
+              <collection-cell
+                :title="sku.name"
+                :image-url="sku.unchecked_sku_img_url"
+                :is-selected="skuSelect(index, skuIndex)"
+                @click="collectionCellClick(sku)"
+              ></collection-cell>
             </template>
           </collection-group>
         </template>

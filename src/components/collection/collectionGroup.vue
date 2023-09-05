@@ -14,8 +14,6 @@ const props = defineProps({
 </template>
 
 <style scoped>
-.collection-group {
-}
 
 .title {
   /* width: 100%; */
