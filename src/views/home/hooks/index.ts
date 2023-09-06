@@ -65,7 +65,7 @@ export const configData: ConfigModel[] = [
 const APIName = {
   Live: `/sku/wap/openLives/${useAppStoreHook().currentSkuId}`,
   Courses: `/sku/wap/courses/${useAppStoreHook().currentSkuId}`,
-  Commodity: `/sku/wap/commodity/${useAppStoreHook().currentSkuId}`,
+  Commodity: `/sku/feeLive/${useAppStoreHook().currentSkuId}`,
   Carousel: `/sku/wap/carousel/${useAppStoreHook().currentSkuId}`,
   Config: "/sku/index/config/sku"
 };
@@ -104,20 +104,20 @@ export function requestSkuList() {
     });
 }
 
-export function requestOpenLives() {
-  return http.get<Live>(APIName.Live, null, false);
+export function requestOpenLives<T>() {
+  return http.get<T>(APIName.Live, null, false);
 }
 
-export function requestCourses() {
-  return http.get(APIName.Courses, null, false);
+export function requestCourses<T>() {
+  return http.get<T>(APIName.Courses, null, false);
 }
 
-export function requestCarousel() {
-  return http.get<Banner[]>(APIName.Carousel, null, false);
+export function requestCarousel<T>() {
+  return http.get<T>(APIName.Carousel, null, false);
 }
 
-export function requestCommodity() {
-  return http.get(APIName.Commodity, null, false);
+export function requestCommodity<T>() {
+  return http.post<T>(APIName.Commodity, {appType: 998}, false);
 }
 
 export function requestSkuConfig<T>() {

@@ -9,23 +9,34 @@ const props = defineProps({
   imageWidth: String,
   imageHeight: String,
   fontSize: Number,
-  fontColor: String,
-})
+  fontColor: String
+});
 
 const imageStr = computed(() => {
-  if (props.imageUrl.startWith('/src')) {
+  if (props.imageUrl?.startsWith("/src")) {
     return props.imageUrl;
   } else {
-    return '/image' + props.imageUrl;
+    return "/image" + props.imageUrl;
   }
-})
-
+});
 </script>
 
 <template>
-  <div class="re-button" :class="{ 'image-top': imageTop, 'image-left': imageLeft, 'image-right': imageRight }">
-    <van-image :width="props.imageWidth" :height="props.imageHeight ? props.imageHeight : props.imageWidth" fit="contain"
-      position="center" :src="imageStr"></van-image>
+  <div
+    class="re-button"
+    :class="{
+      'image-top': imageTop,
+      'image-left': imageLeft,
+      'image-right': imageRight
+    }"
+  >
+    <van-image
+      :width="props.imageWidth"
+      :height="props.imageHeight ? props.imageHeight : props.imageWidth"
+      fit="contain"
+      position="center"
+      :src="imageStr"
+    ></van-image>
     <div class="text">{{ title }}</div>
   </div>
 </template>
