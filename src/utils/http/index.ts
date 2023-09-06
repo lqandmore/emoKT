@@ -81,8 +81,6 @@ class Http {
         if (response.data["code"] !== undefined) {
 
           const dataInfo = response.data as codeHttpResponse;
-          console.log(dataInfo);
-
           if (dataInfo.code === 200) {
             return dataInfo.data;
           } else {
