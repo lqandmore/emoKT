@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { LiveModel } from '../hooks/types'
+import { LiveModel } from "../hooks/types";
 
 const props = defineProps({
-  model: Object,
-})
+  model: Object
+});
 
-const livemodel = props.model as LiveModel
+const livemodel = props.model as LiveModel;
 const timeStr = computed(() => {
-  return livemodel.startTime + "-" + livemodel.endTime
-})
+  return livemodel.startTime + "-" + livemodel.endTime;
+});
 
 const isPlayBack = computed(() => {
-  return livemodel.status === 2
-})
+  return livemodel.openLiveStatus === 1;
+});
 </script>
 
 <template>
@@ -26,9 +26,22 @@ const isPlayBack = computed(() => {
       <div class="subscribe">{{ `${livemodel.subscribeNum}预约` }}</div>
     </div>
     <div class="right">
-      <van-image class="mask-image" src="/src/assets/home/live-mengceng.png"></van-image>
-      <van-image class="teacher" :src="'/image' + livemodel.teacherUrl"></van-image>
-      <van-image class="status-button" src="/src/assets/home/subscribe.png"></van-image>
+      <van-image
+        class="mask-image"
+        src="/src/assets/home/live-mengceng.png"
+      ></van-image>
+      <van-image
+        class="teacher"
+        :src="'/image' + livemodel.teacherUrl"
+      ></van-image>
+      <van-image
+        class="status-button"
+        :src="
+          isPlayBack
+            ? '/src/assets/home/img-playback.png'
+            : '/src/assets/home/subscribe.png'
+        "
+      ></van-image>
     </div>
   </div>
 </template>
@@ -37,9 +50,10 @@ const isPlayBack = computed(() => {
 .live-item {
   display: flex;
   justify-content: space-between;
-  padding: 0 10px;
+  padding: 0 0 0 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
 .left {
@@ -65,7 +79,6 @@ const isPlayBack = computed(() => {
       background-size: 40px 20px;
       border-bottom-right-radius: 10px;
       border-top-left-radius: 10px;
-
     }
   }
 
@@ -89,13 +102,12 @@ const isPlayBack = computed(() => {
   }
 }
 
-
 .live {
-  background-image: url('/src/assets/home/tag-live.png');
+  background-image: url("/src/assets/home/tag-live.png");
 }
 
 .playback {
-  background-image: url('/src/assets/home/tag-playback.png');
+  background-image: url("/src/assets/home/tag-playback.png");
 }
 
 .right {
@@ -103,7 +115,6 @@ const isPlayBack = computed(() => {
   width: 107px;
   height: 133px;
 }
-
 
 .mask-image {
   position: absolute;

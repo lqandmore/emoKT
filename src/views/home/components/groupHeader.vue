@@ -36,6 +36,7 @@ const btnClick = () => {
 .group-header {
   display: flex;
   justify-content: space-between;
-  padding-top: 10px;
+  padding-top: 20px;
+  padding-bottom: 10px;
 }
 </style>

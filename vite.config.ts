@@ -49,7 +49,7 @@ export default defineConfig({
         rewrite: path => path.replace(/^\/sku/, "")
       },
       "/image": {
-        target: "http://tu.duia.com/",
+        target: "http://tu.test.duia.com/",
         changeOrigin: true,
         rewrite: path => path.replace(/^\/image/, "")
       }

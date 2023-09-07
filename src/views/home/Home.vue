@@ -48,7 +48,7 @@ const dealConfigData = (arr: any[]) => {
   configArr.value = configData;
 };
 
-async function requestDatas () {
+async function requestDatas() {
   try {
     const { courseLiveNewDtos } = await requestOpenLives<Live>();
     liveArr.value = courseLiveNewDtos;
@@ -58,6 +58,12 @@ async function requestDatas () {
     dealConfigData(wap);
 
     commodityArr.value = await requestCommodity<GoodsModel[]>();
+    // if (goodData.length > 3) {
+    //   commodityArr.value = goodData.slice(0, 3);
+    // } else {
+    //   commodityArr.value = goodData;
+    // }
+    console.log(commodityArr.value.length);
 
     courseArr.value = await requestCourses<CourseModel[]>();
   } catch (error: any) {
@@ -72,7 +78,12 @@ onMounted(() => {
 
 <template>
   <div class="home">
-    <van-nav-bar :title="useAppStoreHook().currentSkuName" left-text="分类" right-text="咨询" class="top" />
+    <van-nav-bar
+      :title="useAppStoreHook().currentSkuName"
+      left-text="分类"
+      right-text="咨询"
+      class="top"
+    />
     <div class="container">
       <van-swipe :autoplay="3000" lazy-render>
         <van-swipe-item v-for="(item, index) in banners" :key="index">
@@ -82,20 +93,29 @@ onMounted(() => {
 
       <div class="config-container">
         <template v-for="item in configArr" :key="item.sort">
-          <re-button :title="item.name" :image-url="item.image" image-width="44px" image-height="32px"
-            image-top></re-button>
+          <re-button
+            :title="item.name"
+            :image-url="item.image"
+            image-width="44px"
+            image-height="32px"
+            image-top
+          ></re-button>
         </template>
       </div>
       <div class="public-container">
-        <group-header title="今日直播公开课" @moreClick="groupTopClick"></group-header>
+        <group-header
+          title="今日直播公开课"
+          @moreClick="groupTopClick"
+        ></group-header>
         <template v-for="(model, index) in liveArr" :key="model.id">
           <live-item :model="model"></live-item>
         </template>
-
       </div>
       <div class="goods-container">
         <group-header title="系统班" @moreClick="groupTopClick"></group-header>
-        <goods-item></goods-item>
+        <template v-for="model in commodityArr" :key="model.id">
+          <goods-item :model="model"></goods-item>
+        </template>
       </div>
       <div class="course-container">
         <group-header title="视频课" @moreClick="groupTopClick"></group-header>

@@ -8,7 +8,8 @@ const props = defineProps({
   imageRight: Boolean,
   imageWidth: String,
   imageHeight: String,
-  fontSize: Number,
+  imageRedius: String,
+  fontSize: String,
   fontColor: String
 });
 
@@ -16,7 +17,7 @@ const imageStr = computed(() => {
   if (props.imageUrl?.startsWith("/src")) {
     return props.imageUrl;
   } else {
-    return "/image" + props.imageUrl;
+    return "https://tu.test.duia.com/" + props.imageUrl;
   }
 });
 </script>
@@ -36,8 +37,11 @@ const imageStr = computed(() => {
       fit="contain"
       position="center"
       :src="imageStr"
+      :radius="imageRedius"
     ></van-image>
-    <div class="text">{{ title }}</div>
+    <div class="text" :style="{ 'font-size': fontSize, color: fontColor }">
+      {{ title }}
+    </div>
   </div>
 </template>
 
@@ -62,5 +66,14 @@ const imageStr = computed(() => {
   flex-direction: row-reverse;
   justify-content: space-between;
   align-items: center;
+}
+.text {
+  width: 100%;
+  height: 20px;
+  overflow: hidden;
+  text-align: center;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
 }
 </style>
