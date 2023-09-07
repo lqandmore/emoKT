@@ -19,6 +19,9 @@ import {
 import { configData } from "./hooks";
 import reButton from "@/components/reButton/reButton.vue";
 import groupHeader from "./components/groupHeader.vue";
+import liveItem from "./components/liveItem.vue";
+import courseItem from "./components/courseItem.vue";
+import goodsItem from "./components/goodsItem.vue";
 
 const groupTopClick = (title: string) => {
   console.log(title);
@@ -45,7 +48,7 @@ const dealConfigData = (arr: any[]) => {
   configArr.value = configData;
 };
 
-async function requestDatas() {
+async function requestDatas () {
   try {
     const { courseLiveNewDtos } = await requestOpenLives<Live>();
     liveArr.value = courseLiveNewDtos;
@@ -69,12 +72,7 @@ onMounted(() => {
 
 <template>
   <div class="home">
-    <van-nav-bar
-      :title="useAppStoreHook().currentSkuName"
-      left-text="分类"
-      right-text="咨询"
-      class="top"
-    />
+    <van-nav-bar :title="useAppStoreHook().currentSkuName" left-text="分类" right-text="咨询" class="top" />
     <div class="container">
       <van-swipe :autoplay="3000" lazy-render>
         <van-swipe-item v-for="(item, index) in banners" :key="index">
@@ -84,26 +82,24 @@ onMounted(() => {
 
       <div class="config-container">
         <template v-for="item in configArr" :key="item.sort">
-          <re-button
-            :title="item.name"
-            :image-url="item.image"
-            image-width="44px"
-            image-height="32px"
-            image-top
-          ></re-button>
+          <re-button :title="item.name" :image-url="item.image" image-width="44px" image-height="32px"
+            image-top></re-button>
         </template>
       </div>
       <div class="public-container">
-        <group-header
-          title="今日直播公开课"
-          @moreClick="groupTopClick"
-        ></group-header>
+        <group-header title="今日直播公开课" @moreClick="groupTopClick"></group-header>
+        <template v-for="(model, index) in liveArr" :key="model.id">
+          <live-item :model="model"></live-item>
+        </template>
+
       </div>
       <div class="goods-container">
         <group-header title="系统班" @moreClick="groupTopClick"></group-header>
+        <goods-item></goods-item>
       </div>
       <div class="course-container">
         <group-header title="视频课" @moreClick="groupTopClick"></group-header>
+        <course-item></course-item>
       </div>
     </div>
   </div>
@@ -114,6 +110,7 @@ onMounted(() => {
   padding: 0 15px;
   width: calc(100vw - 30px);
 }
+
 .van-nav-bar {
   --van-nav-bar-text-color: var(--primary-theme-color);
 }
@@ -122,6 +119,7 @@ onMounted(() => {
   width: 100%;
   height: 150px;
 }
+
 .config-container {
   width: 100%;
 
@@ -131,6 +129,4 @@ onMounted(() => {
     margin-top: 20px;
   }
 }
-
-
 </style>
