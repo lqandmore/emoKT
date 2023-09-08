@@ -85,7 +85,7 @@ const subtitle = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin: 10px;
+  margin-top: 15px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
   .tag {

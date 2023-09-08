@@ -17,6 +17,12 @@
 
 
   --primary-theme-color: #47c88a;
+  --animate-duration: 800ms;
+  --animate-delay: 0.9s;
+
+}
+:root:root {
+  --van-nav-bar-z-index: 100;
 }
 
 a {

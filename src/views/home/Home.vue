@@ -32,6 +32,7 @@ const liveArr = ref<LiveModel[]>([]);
 const configArr = ref<ConfigModel[]>([]);
 const commodityArr = ref<GoodsModel[]>([]);
 const courseArr = ref<CourseModel[]>([]);
+const hideRobot = ref(false);
 
 const dealConfigData = (arr: any[]) => {
   for (let index = 0; index < configData.length; index++) {
@@ -57,13 +58,12 @@ async function requestDatas() {
     const { wap } = await requestSkuConfig<configReSponse>();
     dealConfigData(wap);
 
-    commodityArr.value = await requestCommodity<GoodsModel[]>();
-    // if (goodData.length > 3) {
-    //   commodityArr.value = goodData.slice(0, 3);
-    // } else {
-    //   commodityArr.value = goodData;
-    // }
-    console.log(commodityArr.value.length);
+    const goodData = await requestCommodity<GoodsModel[]>();
+    if (goodData.length > 5) {
+      commodityArr.value = goodData.slice(0, 5);
+    } else {
+      commodityArr.value = goodData;
+    }
 
     courseArr.value = await requestCourses<CourseModel[]>();
   } catch (error: any) {
@@ -74,6 +74,21 @@ async function requestDatas() {
 onMounted(() => {
   requestDatas();
 });
+
+let oldTop = 0;
+
+document.onscroll = () => {
+  let top = document.scrollingElement?.scrollTop;
+  if (top) {
+    if (top > oldTop) {
+      if (!hideRobot.value) hideRobot.value = true;
+    } else {
+      if (hideRobot.value) hideRobot.value = false;
+    }
+    oldTop = top;
+  }
+};
+//
 </script>
 
 <template>
@@ -83,6 +98,7 @@ onMounted(() => {
       left-text="分类"
       right-text="咨询"
       class="top"
+      fixed
     />
     <div class="container">
       <van-swipe :autoplay="3000" lazy-render>
@@ -107,7 +123,7 @@ onMounted(() => {
           title="今日直播公开课"
           @moreClick="groupTopClick"
         ></group-header>
-        <template v-for="(model, index) in liveArr" :key="model.id">
+        <template v-for="model in liveArr" :key="model.id">
           <live-item :model="model"></live-item>
         </template>
       </div>
@@ -119,15 +135,31 @@ onMounted(() => {
       </div>
       <div class="course-container">
         <group-header title="视频课" @moreClick="groupTopClick"></group-header>
-        <course-item></course-item>
+        <template v-for="model in courseArr" :key="model.id">
+          <course-item :model="model"></course-item>
+        </template>
       </div>
     </div>
+    <transition name="robot">
+      <van-image
+        class="robot-btn"
+        :class="hideRobot ? 'right-side' : ''"
+        src="https://mlist.duia.com/static/img/robot-icon.3bdd84e1.gif"
+        width="85px"
+        height="85px"
+      ></van-image>
+    </transition>
   </div>
 </template>
 
 <style scoped>
+.home {
+  position: relative;
+  display: flex;
+}
 .container {
-  padding: 0 15px;
+  display: block;
+  padding: 60px 15px 100px 15px;
   width: calc(100vw - 30px);
 }
 
@@ -148,5 +180,16 @@ onMounted(() => {
     height: 60px;
     margin-top: 20px;
   }
+}
+.robot-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 100px;
+  z-index: 10;
+}
+
+
+.right-side {
+  right: -45px;
 }
 </style>
