@@ -3,14 +3,11 @@ import { useAppStoreHook } from "./store/app";
 useAppStoreHook().readCache();
 
 const active = ref(0);
-const computedSelect = () => {
-  return useAppStoreHook().currentSkuId !== 0;
-};
 </script>
 
 <template>
   <RouterView />
-  <template v-if="computedSelect()">
+  <template v-if="useAppStoreHook().showTabbar">
     <van-tabbar fixed route v-model="active">
       <van-tabbar-item replace to="/:skuId" icon="home-o">首页</van-tabbar-item>
       <van-tabbar-item replace to="/class" icon="tv-o">班级</van-tabbar-item>

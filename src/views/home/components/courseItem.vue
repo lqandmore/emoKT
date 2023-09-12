@@ -37,6 +37,7 @@ const model = props.model as CourseModel;
 .course-item {
   position: relative;
   display: flex;
+  margin-top: 20px;
   width: 100%;
 }
 
@@ -55,6 +56,7 @@ const model = props.model as CourseModel;
   flex-direction: column;
   align-items: flex-start;
   margin-top: 20px;
+  width: 100%;
   padding: 200px 10px 0 10px;
   .title {
     text-align: left;

@@ -7,9 +7,10 @@ export const useAppStore = defineStore({
   id: "app",
   state: () => {
     return {
+      showTabbar: false,
       collageIndex: 0,
       skuIndex: 0,
-      sku: {} as Sku
+      sku: {} as Sku,
     };
   },
   getters: {

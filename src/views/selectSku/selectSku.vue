@@ -6,11 +6,22 @@ import leftCell from "./leftCell.vue";
 import router from "@/router";
 import { useAppStoreHook } from "@/store/app";
 
+const props = defineProps({
+  needClose: Boolean
+});
+
+const emit = defineEmits<{
+  (event: 'dismiss', changed: boolean): void
+}>()
+
 const collegesArr = ref(Array<Colleges>());
 let scrollEndTimer: any;
 const selectIndex = ref(0);
 let isClick = false;
 let bannerRef = ref("");
+const back = () => {
+  emit("dismiss",false);
+};
 
 async function requestData() {
   try {
@@ -75,12 +86,16 @@ document.onscroll = () => {
 };
 
 const bannerClick = () => {
-  console.log(2222222);
+  console.log("选择分类页banner");
 };
 
 const collectionCellClick = (sku: Sku) => {
   useAppStoreHook().setSku(sku);
-  router.push({ path: `/${sku.skuId}` });
+  if (props.needClose) {
+    emit("dismiss", true);
+  } else {
+    router.push({ path: `/${sku.skuId}` });
+  }
 };
 
 const skuSelect = (x: number, y: number) => {
@@ -91,8 +106,14 @@ const skuSelect = (x: number, y: number) => {
 </script>
 
 <template>
-  <div class="select">
-    <van-nav-bar title="对啊课堂 分类" class="top" />
+  <div class="select-sku">
+    <van-nav-bar
+      title="对啊课堂 分类"
+      class="top"
+      :left-arrow="props.needClose"
+      fixed
+      @click-left="back()"
+    />
     <div class="left">
       <template v-for="(college, index) in collegesArr" :key="college.id">
         <left-cell
@@ -140,6 +161,12 @@ const skuSelect = (x: number, y: number) => {
   flex-direction: column;
   height: 100vh;
 } */
+.select-sku {
+  position: relative;
+  background-size: 100vw 100vh;
+  background-color: #fff;
+}
+
 .top {
   position: fixed;
   width: 100vw;
@@ -159,7 +186,6 @@ const skuSelect = (x: number, y: number) => {
 }
 
 .container {
-  position: relative;
   padding: 60px 0 0 78px;
   width: calc(100vw - 78px);
 }
@@ -170,10 +196,16 @@ const skuSelect = (x: number, y: number) => {
 }
 
 .list {
-  position: absolute;
   display: flex;
   flex-direction: column;
   background-color: rgb(246, 246, 246);
+}
+
+.list::after {
+  content: "";
+  display: block;
+  clear: both;
+  height: 0;
 }
 
 .right {

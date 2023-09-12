@@ -22,10 +22,7 @@ import groupHeader from "./components/groupHeader.vue";
 import liveItem from "./components/liveItem.vue";
 import courseItem from "./components/courseItem.vue";
 import goodsItem from "./components/goodsItem.vue";
-
-const groupTopClick = (title: string) => {
-  console.log(title);
-};
+import selectSku from "../selectSku/selectSku.vue";
 
 const banners = ref<Banner[]>([]);
 const liveArr = ref<LiveModel[]>([]);
@@ -33,6 +30,19 @@ const configArr = ref<ConfigModel[]>([]);
 const commodityArr = ref<GoodsModel[]>([]);
 const courseArr = ref<CourseModel[]>([]);
 const hideRobot = ref(false);
+const showSeletSku = ref(false);
+
+const groupTopClick = (title: string) => {
+  console.log(title);
+};
+const showselectView = (show: boolean) => {
+  showSeletSku.value = show;
+  useAppStoreHook().showTabbar = !show;
+};
+
+const consultInfo = () => {
+  console.log("咨询");
+};
 
 const dealConfigData = (arr: any[]) => {
   for (let index = 0; index < configData.length; index++) {
@@ -72,6 +82,7 @@ async function requestDatas() {
 }
 
 onMounted(() => {
+  useAppStoreHook().showTabbar = true;
   requestDatas();
 });
 
@@ -99,8 +110,10 @@ document.onscroll = () => {
       right-text="咨询"
       class="top"
       fixed
+      @click-left="showselectView(true)"
+      @click-right="consultInfo()"
     />
-    <div class="container">
+    <div class="container" v-if="!showSeletSku">
       <van-swipe :autoplay="3000" lazy-render>
         <van-swipe-item v-for="(item, index) in banners" :key="index">
           <img :src="'/image' + item.picUrl" />
@@ -149,6 +162,13 @@ document.onscroll = () => {
         height="85px"
       ></van-image>
     </transition>
+    <keep-alive>
+      <select-sku
+        v-if="showSeletSku"
+        needClose
+        @dismiss="showselectView(false)"
+      ></select-sku>
+    </keep-alive>
   </div>
 </template>
 
@@ -188,8 +208,15 @@ document.onscroll = () => {
   z-index: 10;
 }
 
-
 .right-side {
   right: -45px;
+}
+
+.select-sku {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  z-index: 101;
 }
 </style>
