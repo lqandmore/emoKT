@@ -10,7 +10,7 @@ export const useAppStore = defineStore({
       showTabbar: false,
       collageIndex: 0,
       skuIndex: 0,
-      sku: {} as Sku,
+      sku: {} as Sku
     };
   },
   getters: {
@@ -25,6 +25,7 @@ export const useAppStore = defineStore({
     savePosition(x: number, y: number): void {
       this.collageIndex = x;
       this.skuIndex = y;
+      cache.setCache("selectSkuIndex", { x: x, y: y });
     },
     setSku(obj: Sku) {
       cache.setCache("selectSku", obj);
@@ -34,6 +35,13 @@ export const useAppStore = defineStore({
       const obj: Sku = cache.getCache("selectSku");
       if (obj) {
         this.sku = obj;
+      }
+
+      const o: any = cache.getCache("selectSkuIndex");
+      if (o) {
+        const { x, y } = o;
+        this.collageIndex = x;
+        this.skuIndex = y;
       }
     }
   }

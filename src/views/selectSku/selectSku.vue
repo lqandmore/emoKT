@@ -12,6 +12,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (event: 'dismiss', changed: boolean): void
+  (event: 'skuChanged'): void
 }>()
 
 const collegesArr = ref(Array<Colleges>());
@@ -20,10 +21,10 @@ const selectIndex = ref(0);
 let isClick = false;
 let bannerRef = ref("");
 const back = () => {
-  emit("dismiss",false);
+  emit("dismiss", false);
 };
 
-async function requestData() {
+async function requestData () {
   try {
     const { banner, colleges } = await requestSkuData();
     collegesArr.value = colleges;
@@ -38,16 +39,14 @@ onMounted(() => {
 });
 
 const leftClick = (index: number) => {
-  console.log(index);
-
   isClick = true;
   setTimeout(callback, 100);
   selectIndex.value = index;
   const El = document.getElementsByClassName("collegeTitle")[index];
-  El.scrollIntoView({ behavior: "auto" });
+  El.scrollIntoView({ behavior: "smooth" });
 };
 
-function getTopVisibleElement(): Element | null {
+function getTopVisibleElement (): Element | null {
   const boxes = document.querySelectorAll(".collegeTitle");
 
   let topElement = null;
@@ -69,7 +68,9 @@ const callback = () => {
   isClick = false;
 };
 
-document.onscroll = () => {
+
+const onscroll = () => {
+
   const topVisibleElement = getTopVisibleElement();
   let attrs = selectIndex.value;
   if (typeof topVisibleElement?.getAttribute("index") === "string") {
@@ -89,10 +90,13 @@ const bannerClick = () => {
   console.log("选择分类页banner");
 };
 
-const collectionCellClick = (sku: Sku) => {
+const collectionCellClick = (sku: Sku, index: number, skuIndex: number) => {
   useAppStoreHook().setSku(sku);
+  useAppStoreHook().savePosition(index, skuIndex)
+
   if (props.needClose) {
-    emit("dismiss", true);
+    emit("dismiss", false);
+    emit("skuChanged");
   } else {
     router.push({ path: `/${sku.skuId}` });
   }
@@ -107,46 +111,24 @@ const skuSelect = (x: number, y: number) => {
 
 <template>
   <div class="select-sku">
-    <van-nav-bar
-      title="对啊课堂 分类"
-      class="top"
-      :left-arrow="props.needClose"
-      fixed
-      @click-left="back()"
-    />
+    <van-nav-bar title="对啊课堂 分类" class="top" :left-arrow="props.needClose" fixed @click-left="back" />
     <div class="left">
       <template v-for="(college, index) in collegesArr" :key="college.id">
-        <left-cell
-          :title="college.name"
-          :select="selectIndex === index"
-          :previous="selectIndex > 0 && selectIndex - 1 === index"
-          :index="index"
-          @click="leftClick(index)"
-        >
+        <left-cell :title="college.name" :select="selectIndex === index"
+          :previous="selectIndex > 0 && selectIndex - 1 === index" :index="index" @click="leftClick(index)">
         </left-cell>
       </template>
     </div>
 
-    <div class="container">
-      <van-image
-        class="banner"
-        :src="bannerRef"
-        @click="bannerClick()"
-      ></van-image>
+    <div class="container" @scroll="onscroll">
+      <van-image class="banner" :src="bannerRef" @click="bannerClick()"></van-image>
       <div class="list">
         <template v-for="(college, index) in collegesArr" :key="college.id">
-          <collection-group
-            class="collegeTitle"
-            :title="college.name"
-            :index="index"
-          >
+          <collection-group class="collegeTitle" :title="college.name" :index="index">
             <template v-for="(sku, skuIndex) in college.skus" :key="sku.id">
-              <collection-cell
-                :title="sku.name"
-                :image-url="sku.unchecked_sku_img_url"
+              <collection-cell :title="sku.name" :image-url="sku.unchecked_sku_img_url"
                 :is-selected="skuSelect(index, skuIndex)"
-                @click="collectionCellClick(sku)"
-              ></collection-cell>
+                @click="collectionCellClick(sku, index, skuIndex)"></collection-cell>
             </template>
           </collection-group>
         </template>
@@ -163,6 +145,8 @@ const skuSelect = (x: number, y: number) => {
 } */
 .select-sku {
   position: relative;
+  width: 100vw;
+  height: 100vh;
   background-size: 100vw 100vh;
   background-color: #fff;
 }
@@ -186,8 +170,13 @@ const skuSelect = (x: number, y: number) => {
 }
 
 .container {
-  padding: 60px 0 0 78px;
+  position: absolute;
+  left: 78px;
+  top: 68px;
   width: calc(100vw - 78px);
+  height: calc(100vh - 60px);
+  /* overflow: hidden; */
+  overflow-y: scroll;
 }
 
 .banner {

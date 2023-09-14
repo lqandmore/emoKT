@@ -30,7 +30,7 @@ export function requestSkuData() {
 
 export function requestSkuList() {
   http
-    .post("/api/appSkuConfig/getAppMainPageForSku", params)
+    .post("/api/appSkuConfig/getAppMainPageForSku", null, true)
     .then((res: any) => {
       const { data } = res;
       console.log(data);

@@ -31,6 +31,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/selectSku",
     name: "selectSku",
     component: () => import("../views/selectSku/selectSku.vue")
+  },
+  {
+    path: "/goodsList",
+    name: "goods-list",
+    component: () => import("../views/goods/goodsList.vue")
   }
 ];
 
@@ -40,6 +45,16 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from) => {
+  if (
+    to.path === "/mine" ||
+    to.path === "/class" ||
+    to.path === "/exerciseLib" ||
+    to.path === "/:skuId"
+  ) {
+    useAppStoreHook().showTabbar = true;
+  } else {
+    useAppStoreHook().showTabbar = false;
+  }
   if (
     to.path !== "/selectSku" &&
     useAppStoreHook().currentSkuId === undefined
